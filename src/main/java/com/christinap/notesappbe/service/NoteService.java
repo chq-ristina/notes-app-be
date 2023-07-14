@@ -1,6 +1,8 @@
 package com.christinap.notesappbe.service;
 
 import com.christinap.notesappbe.entity.Note;
+import com.christinap.notesappbe.model.note.NoteDeleteRequest;
+import com.christinap.notesappbe.model.note.NoteDeleteResponse;
 import com.christinap.notesappbe.model.note.NoteRequest;
 import com.christinap.notesappbe.model.note.NoteResponse;
 
@@ -14,4 +16,6 @@ public interface NoteService {
     List<Note> findNoteById(String query);
 
     Note findOneNoteById(Integer id);
+
+    NoteDeleteResponse deleteNote(NoteDeleteRequest request);
 }

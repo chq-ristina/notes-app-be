@@ -1,6 +1,7 @@
 package com.christinap.notesappbe.controller;
 
 import com.christinap.notesappbe.entity.Note;
+import com.christinap.notesappbe.model.note.NoteDeleteRequest;
 import com.christinap.notesappbe.model.shared.AcceptRequest;
 import com.christinap.notesappbe.model.shared.AcceptResponse;
 import com.christinap.notesappbe.model.shared.SharedRequest;
@@ -45,6 +46,13 @@ public class SharedController {
             @RequestParam("query") String query
     ){
         return ResponseEntity.ok(sharedService.getPendingSharedNotes(query));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<SharedResponse> deleteSharedByNoteId(
+            @RequestBody NoteDeleteRequest request
+            ){
+        return ResponseEntity.ok(sharedService.deleteShared(request));
     }
 
 }

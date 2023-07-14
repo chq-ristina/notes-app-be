@@ -1,6 +1,8 @@
 package com.christinap.notesappbe.service.impl;
 
 import com.christinap.notesappbe.entity.Note;
+import com.christinap.notesappbe.model.note.NoteDeleteRequest;
+import com.christinap.notesappbe.model.note.NoteDeleteResponse;
 import com.christinap.notesappbe.model.note.NoteRequest;
 import com.christinap.notesappbe.model.note.NoteResponse;
 import com.christinap.notesappbe.repository.NoteRepository;
@@ -29,6 +31,7 @@ public class NoteServiceImpl implements NoteService{
         noteRepository.save(note);
 
        return NoteResponse.builder()
+               .id(note.getId())
                .user_id(user.getId())
                .text(note.getText())
                .authorUsername(user.getUsername())
@@ -48,5 +51,14 @@ public class NoteServiceImpl implements NoteService{
     @Override
     public Note findOneNoteById(Integer id) {
         return noteRepository.findOneNoteById(id).orElseThrow();
+    }
+
+    @Override
+    public NoteDeleteResponse deleteNote(NoteDeleteRequest request) {
+        var note = noteRepository.findOneNoteById(request.getId()).orElseThrow();
+        noteRepository.delete(note);
+        return NoteDeleteResponse.builder()
+                .id(note.getId())
+                .build();
     }
 }

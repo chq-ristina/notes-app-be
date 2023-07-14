@@ -18,10 +18,10 @@ public class Shared {
     @GeneratedValue
     private Integer id;
     @Column(name = "note_id")
-    private Integer note_id;
+    private Integer noteId;
     @Column(name = "source_user")
-    private Integer source_user;
+    private Integer sourceUser;
     @Column(name = "target_user")
-    private Integer target_user;
+    private Integer targetUser;
     private Boolean accepted;
 }

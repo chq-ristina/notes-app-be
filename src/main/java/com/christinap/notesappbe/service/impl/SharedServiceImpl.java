@@ -2,6 +2,7 @@ package com.christinap.notesappbe.service.impl;
 
 import com.christinap.notesappbe.entity.Note;
 import com.christinap.notesappbe.entity.Shared;
+import com.christinap.notesappbe.model.note.NoteDeleteRequest;
 import com.christinap.notesappbe.model.shared.AcceptRequest;
 import com.christinap.notesappbe.model.shared.AcceptResponse;
 import com.christinap.notesappbe.model.shared.SharedRequest;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -32,17 +32,17 @@ public class SharedServiceImpl implements SharedService {
         var targetId = targetUser.getId();
 
         var shared = Shared.builder()
-                .note_id(request.getNoteId())
-                .source_user(sourceId)
-                .target_user(targetId)
+                .noteId(request.getNoteId())
+                .sourceUser(sourceId)
+                .targetUser(targetId)
                 .build();
         sharedRepository.save(shared);
 
         return SharedResponse.builder()
                 .id(shared.getId())
-                .noteId(shared.getNote_id())
-                .sourceId(shared.getSource_user())
-                .targetId(shared.getTarget_user())
+                .noteId(shared.getNoteId())
+                .sourceId(shared.getSourceUser())
+                .targetId(shared.getTargetUser())
                 .build();
     }
 
@@ -83,5 +83,16 @@ public class SharedServiceImpl implements SharedService {
         }
 
         return notes;
+    }
+
+    @Override
+    public SharedResponse deleteShared(NoteDeleteRequest request) {
+        var shared = sharedRepository.getSharedByNoteId(request.getId()).orElseThrow();
+        sharedRepository.delete(shared);
+        return SharedResponse.builder()
+                .id(shared.getId())
+                .targetId(shared.getTargetUser())
+                .sourceId(shared.getSourceUser())
+                .build();
     }
 }

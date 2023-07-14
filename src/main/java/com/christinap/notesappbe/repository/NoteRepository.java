@@ -17,8 +17,4 @@ public interface NoteRepository extends JpaRepository<Note, Integer> {
     List<Note> findNoteById(String query);
 
     Optional<Note> findOneNoteById(Integer id);
-
-
-    //https://stackoverflow.com/questions/444251/how-to-store-a-list-in-a-db-column
-    //https://stackoverflow.com/questions/3070384/how-to-store-a-list-in-a-column-of-a-database-table
 }

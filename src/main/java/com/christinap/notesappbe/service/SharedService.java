@@ -1,6 +1,7 @@
 package com.christinap.notesappbe.service;
 
 import com.christinap.notesappbe.entity.Note;
+import com.christinap.notesappbe.model.note.NoteDeleteRequest;
 import com.christinap.notesappbe.model.shared.AcceptRequest;
 import com.christinap.notesappbe.model.shared.AcceptResponse;
 import com.christinap.notesappbe.model.shared.SharedRequest;
@@ -13,4 +14,5 @@ public interface SharedService {
     List<Note> getSharedNotes(String query);
     AcceptResponse updateAcceptShared(AcceptRequest request);
     List<Note> getPendingSharedNotes(String query);
+    SharedResponse deleteShared(NoteDeleteRequest request);
 }

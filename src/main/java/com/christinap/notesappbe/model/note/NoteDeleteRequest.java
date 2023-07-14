@@ -5,15 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class NoteResponse {
+public class NoteDeleteRequest {
     private Integer id;
-    private Integer user_id;
-    private String text;
-    private String authorUsername;
 }

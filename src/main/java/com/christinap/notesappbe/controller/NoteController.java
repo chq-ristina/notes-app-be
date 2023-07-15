@@ -1,10 +1,7 @@
 package com.christinap.notesappbe.controller;
 
 import com.christinap.notesappbe.entity.Note;
-import com.christinap.notesappbe.model.note.NoteDeleteRequest;
-import com.christinap.notesappbe.model.note.NoteDeleteResponse;
-import com.christinap.notesappbe.model.note.NoteRequest;
-import com.christinap.notesappbe.model.note.NoteResponse;
+import com.christinap.notesappbe.model.note.*;
 import com.christinap.notesappbe.service.NoteService;
 import com.christinap.notesappbe.service.SharedService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +16,6 @@ import java.util.List;
 @CrossOrigin
 public class NoteController {
     private final NoteService noteService;
-    private final SharedService sharedService;
     private final SharedController sharedController;
 
     @PostMapping("/add")
@@ -58,5 +54,12 @@ public class NoteController {
             ){
         sharedController.deleteSharedByNoteId(request);
         return ResponseEntity.ok(noteService.deleteNote(request));
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<UpdateNoteResponse> updateNoteById(
+            @RequestBody UpdateNoteRequest request
+            ){
+        return ResponseEntity.ok(noteService.updateNoteById(request));
     }
 }

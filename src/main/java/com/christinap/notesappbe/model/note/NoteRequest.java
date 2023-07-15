@@ -13,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 public class NoteRequest {
     private String username;
-    private String email; //maybe can use user repo to help with this
+    private String title;
     private String text;
 }

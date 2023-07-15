@@ -22,6 +22,7 @@ public class NoteServiceImpl implements NoteService{
 
         var note = Note.builder()
                 .user_id(user.getId())
+                .title(request.getTitle())
                 .text(request.getText())
                 .build();
 
@@ -30,6 +31,7 @@ public class NoteServiceImpl implements NoteService{
        return NoteResponse.builder()
                .id(note.getId())
                .user_id(user.getId())
+               .title(note.getTitle())
                .text(note.getText())
                .authorUsername(user.getUsername())
                .build();

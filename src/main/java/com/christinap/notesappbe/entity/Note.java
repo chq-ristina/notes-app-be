@@ -23,6 +23,7 @@ public class Note {
     private Integer id;
     @Column(name = "user_id")
     private Integer user_id;
+    private String title;
     private String text;
     @CreationTimestamp
     private LocalDateTime dateCreated;

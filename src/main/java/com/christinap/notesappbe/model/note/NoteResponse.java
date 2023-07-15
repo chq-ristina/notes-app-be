@@ -14,6 +14,7 @@ import java.util.List;
 public class NoteResponse {
     private Integer id;
     private Integer user_id;
+    private String title;
     private String text;
     private String authorUsername;
 }

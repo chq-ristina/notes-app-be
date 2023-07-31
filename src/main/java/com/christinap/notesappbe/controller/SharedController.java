@@ -49,7 +49,7 @@ public class SharedController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<SharedResponse> deleteSharedByNoteId(
+    public ResponseEntity<List<Integer>> deleteSharedByNoteId(
             @RequestBody NoteDeleteRequest request
             ){
         return ResponseEntity.ok(sharedService.deleteShared(request));

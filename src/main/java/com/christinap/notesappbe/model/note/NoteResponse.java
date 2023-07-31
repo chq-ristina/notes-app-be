@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -17,4 +18,5 @@ public class NoteResponse {
     private String title;
     private String text;
     private String authorUsername;
+    private LocalDateTime dateUpdated;
 }

@@ -33,7 +33,8 @@ public class NoteServiceImpl implements NoteService{
                .user_id(user.getId())
                .title(note.getTitle())
                .text(note.getText())
-               .authorUsername(user.getUsername())
+               .authorUsername(user.getUserName())
+               .dateUpdated(note.getDateUpdated())
                .build();
     }
 
@@ -64,7 +65,14 @@ public class NoteServiceImpl implements NoteService{
     @Override
     public UpdateNoteResponse updateNoteById(UpdateNoteRequest request) {
         var note = noteRepository.findOneNoteById(request.getId()).orElseThrow();
-        note.setText(request.getUpdateText());
+        if(request.getUpdateTitle() != null){
+            note.setTitle(request.getUpdateTitle());
+        }
+        if (request.getUpdateText() != null){
+            note.setText(request.getUpdateText());
+        }
+
+
         noteRepository.save(note);
 
         return UpdateNoteResponse.builder()

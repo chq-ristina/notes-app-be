@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateNoteRequest {
     private Integer id;
+    private String updateTitle;
     private String updateText;
 }

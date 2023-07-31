@@ -20,5 +20,9 @@ public interface SharedRepository extends JpaRepository<Shared, Integer> {
             " AND s.accepted IS NULL", nativeQuery = true)
     List<Integer> getPendingSharedByTargetId(String query);
 
+    @Query(value = "SELECT * FROM shared s" +
+            " WHERE s.note_id = :id", nativeQuery = true)
+    List<Shared> getSharedByNoteIdQuery(Integer id);
+
     Optional<Shared> getSharedByNoteId(Integer id);
 }

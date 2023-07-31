@@ -86,13 +86,15 @@ public class SharedServiceImpl implements SharedService {
     }
 
     @Override
-    public SharedResponse deleteShared(NoteDeleteRequest request) {
-        var shared = sharedRepository.getSharedByNoteId(request.getId()).orElseThrow();
-        sharedRepository.delete(shared);
-        return SharedResponse.builder()
-                .id(shared.getId())
-                .targetId(shared.getTargetUser())
-                .sourceId(shared.getSourceUser())
-                .build();
+    public List<Integer> deleteShared(NoteDeleteRequest request) {
+        List<Shared> sharedList = sharedRepository.getSharedByNoteIdQuery(request.getId());
+        List<Integer> deletedShared = new ArrayList<>();
+        if (sharedList.size() != 0) {
+            for (Shared shared : sharedList) {
+                deletedShared.add(shared.getId());
+                sharedRepository.delete(shared);
+            }
+        }
+        return deletedShared;
     }
 }

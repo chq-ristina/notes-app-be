@@ -24,6 +24,7 @@ public class Note {
     @Column(name = "user_id")
     private Integer user_id;
     private String title;
+    @Column(length = 3000)
     private String text;
     @CreationTimestamp
     private LocalDateTime dateCreated;

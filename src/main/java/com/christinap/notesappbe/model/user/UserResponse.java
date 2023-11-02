@@ -1,4 +1,4 @@
-package com.christinap.notesappbe.auth;
+package com.christinap.notesappbe.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
-    private String token;
-    private String userName;
-    private Integer userId;
+public class UserResponse {
+    private String username;
 }

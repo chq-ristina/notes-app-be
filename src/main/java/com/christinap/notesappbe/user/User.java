@@ -1,5 +1,7 @@
 package com.christinap.notesappbe.user;
 
+import com.christinap.notesappbe.entity.Note;
+import com.christinap.notesappbe.entity.Shared;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "user", uniqueConstraints = {@UniqueConstraint(columnNames = {"email", "user_name"})})
 public class User implements UserDetails {
 
     @Id
@@ -24,12 +27,25 @@ public class User implements UserDetails {
     private Integer id;
     private String firstName;
     private String lastName;
+    @Column(name = "user_name")
     private String userName;
     private String email;
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = Note.class)
+    @JoinColumn(name = "user_id")
+    private List<Note> userIds;
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = Shared.class)
+    @JoinColumn(name = "source_user")
+    private List<Shared> sourceUsers;
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = Shared.class)
+    @JoinColumn(name = "target_user")
+    private List<Shared> targetUsers;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -64,6 +80,10 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getUserName(){
+        return userName;
     }
     
 }

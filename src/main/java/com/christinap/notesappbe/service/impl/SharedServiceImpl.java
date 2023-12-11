@@ -3,10 +3,7 @@ package com.christinap.notesappbe.service.impl;
 import com.christinap.notesappbe.entity.Note;
 import com.christinap.notesappbe.entity.Shared;
 import com.christinap.notesappbe.model.note.NoteDeleteRequest;
-import com.christinap.notesappbe.model.shared.AcceptRequest;
-import com.christinap.notesappbe.model.shared.AcceptResponse;
-import com.christinap.notesappbe.model.shared.SharedRequest;
-import com.christinap.notesappbe.model.shared.SharedResponse;
+import com.christinap.notesappbe.model.shared.*;
 import com.christinap.notesappbe.repository.NoteRepository;
 import com.christinap.notesappbe.repository.SharedRepository;
 import com.christinap.notesappbe.service.SharedService;
@@ -14,8 +11,10 @@ import com.christinap.notesappbe.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -28,22 +27,38 @@ public class SharedServiceImpl implements SharedService {
     public SharedResponse addShared(SharedRequest request) {
         var sourceUser = userRepository.findByUserName(request.getSourceUsername()).orElseThrow();
         var sourceId = sourceUser.getId();
-        var targetUser = userRepository.findByUserName(request.getTargetUsername()).orElseThrow();
-        var targetId = targetUser.getId();
 
-        var shared = Shared.builder()
-                .noteId(request.getNoteId())
-                .sourceUser(sourceId)
-                .targetUser(targetId)
-                .build();
-        sharedRepository.save(shared);
+        try {
+            var targetUser = userRepository.findByUserName(request.getTargetUsername()).orElseThrow();
+            var targetId = targetUser.getId();
 
-        return SharedResponse.builder()
-                .id(shared.getId())
-                .noteId(shared.getNoteId())
-                .sourceId(shared.getSourceUser())
-                .targetId(shared.getTargetUser())
-                .build();
+            var shared = Shared.builder()
+                    .noteId(request.getNoteId())
+                    .sourceUser(sourceId)
+                    .targetUser(targetId)
+                    .build();
+            sharedRepository.save(shared);
+
+            return SharedResponse.builder()
+                    .id(shared.getId())
+                    .noteId(shared.getNoteId())
+                    .sourceId(shared.getSourceUser())
+                    .targetId(shared.getTargetUser())
+                    .error(false)
+                    .errorMessage(null)
+                    .build();
+        }
+        catch(NoSuchElementException exception){
+            String errorMessage = request.getTargetUsername() + " could not be found";
+            return SharedResponse.builder()
+                    .id(null)
+                    .noteId(null)
+                    .sourceId(null)
+                    .targetId(null)
+                    .error(true)
+                    .errorMessage(errorMessage)
+                    .build();
+        }
     }
 
     @Override
@@ -96,5 +111,11 @@ public class SharedServiceImpl implements SharedService {
             }
         }
         return deletedShared;
+    }
+
+    @Override
+    public List<Shared> getSharedByNoteId(Integer request)
+    {
+        return sharedRepository.getSharedByNoteIdQuery(request);
     }
 }

@@ -9,11 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SharedResponse {
-    private Integer id;
+public class SharedByNoteIdRequest {
     private Integer noteId;
-    private Integer sourceId;
-    private Integer targetId;
-    private boolean error;
-    private String errorMessage;
 }

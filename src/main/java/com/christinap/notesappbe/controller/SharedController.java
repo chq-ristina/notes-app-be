@@ -1,11 +1,9 @@
 package com.christinap.notesappbe.controller;
 
 import com.christinap.notesappbe.entity.Note;
+import com.christinap.notesappbe.entity.Shared;
 import com.christinap.notesappbe.model.note.NoteDeleteRequest;
-import com.christinap.notesappbe.model.shared.AcceptRequest;
-import com.christinap.notesappbe.model.shared.AcceptResponse;
-import com.christinap.notesappbe.model.shared.SharedRequest;
-import com.christinap.notesappbe.model.shared.SharedResponse;
+import com.christinap.notesappbe.model.shared.*;
 import com.christinap.notesappbe.service.SharedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +51,13 @@ public class SharedController {
             @RequestBody NoteDeleteRequest request
             ){
         return ResponseEntity.ok(sharedService.deleteShared(request));
+    }
+
+    @GetMapping("/get-shared-by-note-id")
+    public ResponseEntity<List<Shared>> getSharedWith(
+            @RequestParam("id") Integer request
+    ){
+        return ResponseEntity.ok(sharedService.getSharedByNoteId(request));
     }
 
 }

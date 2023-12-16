@@ -9,9 +9,11 @@ import com.christinap.notesappbe.repository.SharedRepository;
 import com.christinap.notesappbe.service.SharedService;
 import com.christinap.notesappbe.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLNonTransientException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -37,7 +39,22 @@ public class SharedServiceImpl implements SharedService {
                     .sourceUser(sourceId)
                     .targetUser(targetId)
                     .build();
-            sharedRepository.save(shared);
+
+            try{
+                sharedRepository.save(shared);
+            }
+            catch(DataIntegrityViolationException Exception){
+                String errorMessage = "You have already shared or requested to share with "
+                        + request.getTargetUsername() ;
+                return SharedResponse.builder()
+                        .id(null)
+                        .noteId(null)
+                        .sourceId(null)
+                        .targetId(null)
+                        .error(true)
+                        .errorMessage(errorMessage)
+                        .build();
+            }
 
             return SharedResponse.builder()
                     .id(shared.getId())

@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLNonTransientException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -94,27 +92,30 @@ public class SharedServiceImpl implements SharedService {
 
     @Override
     public AcceptResponse updateAcceptShared(AcceptRequest request) {
-        var shared = sharedRepository.getSharedById(request.getId()).orElseThrow();
-        shared.setAccepted(request.getAccepted());
-        sharedRepository.save(shared);
+        sharedRepository.updateSharedAccept(request.getAccepted(), request.getId());
 
         return AcceptResponse.builder()
-                .id(shared.getId())
+                .id(request.getId())
                 .build();
     }
 
     @Override
-    public List<Note> getPendingSharedNotes(String query) {
-        List<Integer> noteIds = sharedRepository.getPendingSharedByTargetId(query);
+    public List<PendingSharedResponse> getPendingSharedNotes(String query) {
+        List<Shared> pendingShares = sharedRepository.getPendingSharedByTargetId(query);
 
-        List<Note> notes = new ArrayList<>();
+        List<PendingSharedResponse> response = new ArrayList<>();
 
-        for(Integer noteId : noteIds){
-            var note = noteRepository.findOneNoteById(noteId).orElseThrow();
-            notes.add(note);
+        for(Shared pendingShared : pendingShares){
+            PendingSharedResponse pendingSharedResponse = new PendingSharedResponse();
+            var note = noteRepository.findOneNoteById(pendingShared.getNoteId()).orElseThrow();
+
+            pendingSharedResponse.setShareId(pendingShared.getId());
+            pendingSharedResponse.setNote(note);
+
+            response.add(pendingSharedResponse);
         }
 
-        return notes;
+        return response;
     }
 
     @Override

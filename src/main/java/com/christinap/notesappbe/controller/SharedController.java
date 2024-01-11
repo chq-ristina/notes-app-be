@@ -40,7 +40,7 @@ public class SharedController {
     }
 
     @GetMapping("/get-pending")
-    public ResponseEntity<List<Note>> getPendingSharedNotes(
+    public ResponseEntity<List<PendingSharedResponse>> getPendingSharedNotes(
             @RequestParam("query") String query
     ){
         return ResponseEntity.ok(sharedService.getPendingSharedNotes(query));

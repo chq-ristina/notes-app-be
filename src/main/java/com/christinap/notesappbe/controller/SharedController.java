@@ -2,6 +2,7 @@ package com.christinap.notesappbe.controller;
 
 import com.christinap.notesappbe.entity.Note;
 import com.christinap.notesappbe.entity.Shared;
+import com.christinap.notesappbe.model.note.GetNoteResponse;
 import com.christinap.notesappbe.model.note.NoteDeleteRequest;
 import com.christinap.notesappbe.model.shared.*;
 import com.christinap.notesappbe.service.SharedService;
@@ -26,7 +27,7 @@ public class SharedController {
     }
 
     @GetMapping("/get-shared")
-    public ResponseEntity<List<Note>> getSharedNotes(
+    public ResponseEntity<List<GetNoteResponse>> getSharedNotes(
             @RequestParam("query") String query
     ){
         return ResponseEntity.ok(sharedService.getSharedNotes(query));

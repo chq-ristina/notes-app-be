@@ -26,7 +26,7 @@ public class NoteController {
     }
 
     @GetMapping("/find-note/user-id")
-    public ResponseEntity<List<Note>> findNoteByUserId(
+    public ResponseEntity<List<GetNoteResponse>> findNoteByUserId(
             @RequestParam("query") String query
     ){
         return ResponseEntity.ok(noteService.findNoteByUserId(query));

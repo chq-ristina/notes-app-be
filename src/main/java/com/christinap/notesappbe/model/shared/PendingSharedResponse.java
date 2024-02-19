@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class PendingSharedResponse {
     private Integer shareId;
     private Note note;
+    private String noteAuthor;
 }

@@ -8,6 +8,7 @@ import com.christinap.notesappbe.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,8 +40,22 @@ public class NoteServiceImpl implements NoteService{
     }
 
     @Override
-    public List<Note> findNoteByUserId(String query) {
-        return noteRepository.findNoteByUserId(query);
+    public List<GetNoteResponse> findNoteByUserId(String query)
+    {
+        List<GetNoteResponse> response = new ArrayList<>();
+        List<Note> notes = noteRepository.findNoteByUserId(query);
+
+        for (Note note: notes
+             ) {
+            var user = userRepository.findById(note.getUser_id()).orElseThrow();
+            GetNoteResponse noteResponse = new GetNoteResponse();
+            noteResponse.setNote(note);
+            noteResponse.setAuthor(user.getUserName());
+
+            response.add(noteResponse);
+        }
+//        return noteRepository.findNoteByUserId(query);
+        return response;
     }
 
     @Override
@@ -71,7 +86,9 @@ public class NoteServiceImpl implements NoteService{
         if (request.getUpdateText() != null){
             note.setText(request.getUpdateText());
         }
-
+        if (request.getModifiedBy() != null){
+            note.setModifiedBy(request.getModifiedBy());
+        }
 
         noteRepository.save(note);
 

@@ -2,6 +2,7 @@ package com.christinap.notesappbe.service.impl;
 
 import com.christinap.notesappbe.entity.Note;
 import com.christinap.notesappbe.entity.Shared;
+import com.christinap.notesappbe.model.note.GetNoteResponse;
 import com.christinap.notesappbe.model.note.NoteDeleteRequest;
 import com.christinap.notesappbe.model.shared.*;
 import com.christinap.notesappbe.repository.NoteRepository;
@@ -77,17 +78,23 @@ public class SharedServiceImpl implements SharedService {
     }
 
     @Override
-    public List<Note> getSharedNotes(String query) {
+    public List<GetNoteResponse> getSharedNotes(String query) {
         List<Integer> noteIds = sharedRepository.getSharedByTargetId(query);
 
         List<Note> notes = new ArrayList<>();
+        List<GetNoteResponse> response = new ArrayList<>();
 
         for(Integer noteId : noteIds){
             var note = noteRepository.findOneNoteById(noteId).orElseThrow();
+            var user = userRepository.findById(note.getUser_id()).orElseThrow();
+            GetNoteResponse noteResponse = new GetNoteResponse();
+            noteResponse.setNote(note);
+            noteResponse.setAuthor(user.getUserName());
             notes.add(note);
         }
 
-        return notes;
+//        return notes;
+        return response;
     }
 
     @Override
@@ -108,9 +115,10 @@ public class SharedServiceImpl implements SharedService {
         for(Shared pendingShared : pendingShares){
             PendingSharedResponse pendingSharedResponse = new PendingSharedResponse();
             var note = noteRepository.findOneNoteById(pendingShared.getNoteId()).orElseThrow();
-
+            var user = userRepository.findById(note.getUser_id()).orElseThrow();
             pendingSharedResponse.setShareId(pendingShared.getId());
             pendingSharedResponse.setNote(note);
+            pendingSharedResponse.setNoteAuthor(user.getUserName());
 
             response.add(pendingSharedResponse);
         }

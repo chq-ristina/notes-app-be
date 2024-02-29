@@ -55,7 +55,7 @@ public class SharedController {
     }
 
     @GetMapping("/get-shared-by-note-id")
-    public ResponseEntity<List<Shared>> getSharedWith(
+    public ResponseEntity<List<SharedByNoteIdResponse>> getSharedWith(
             @RequestParam("id") Integer request
     ){
         return ResponseEntity.ok(sharedService.getSharedByNoteId(request));

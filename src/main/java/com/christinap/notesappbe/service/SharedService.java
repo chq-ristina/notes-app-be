@@ -14,5 +14,5 @@ public interface SharedService {
     AcceptResponse updateAcceptShared(AcceptRequest request);
     List<PendingSharedResponse> getPendingSharedNotes(String query);
     List<Integer> deleteShared(NoteDeleteRequest request);
-    List<Shared> getSharedByNoteId(Integer request);
+    List<SharedByNoteIdResponse> getSharedByNoteId(Integer request);
 }

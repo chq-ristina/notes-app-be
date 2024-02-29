@@ -90,7 +90,8 @@ public class SharedServiceImpl implements SharedService {
             GetNoteResponse noteResponse = new GetNoteResponse();
             noteResponse.setNote(note);
             noteResponse.setAuthor(user.getUserName());
-            notes.add(note);
+            //notes.add(note);
+            response.add(noteResponse);
         }
 
 //        return notes;
@@ -140,8 +141,20 @@ public class SharedServiceImpl implements SharedService {
     }
 
     @Override
-    public List<Shared> getSharedByNoteId(Integer request)
+    public List<SharedByNoteIdResponse> getSharedByNoteId(Integer request)
     {
-        return sharedRepository.getSharedByNoteIdQuery(request);
+        List<SharedByNoteIdResponse> response = new ArrayList<>();
+        List<Shared> sharedList = sharedRepository.getSharedByNoteIdQuery(request);
+
+        for (Shared shared : sharedList){
+            var targetUser = userRepository.findById(shared.getTargetUser()).orElseThrow();
+            SharedByNoteIdResponse res = new SharedByNoteIdResponse();
+            res.setShared(shared);
+            res.setTargetUsername(targetUser.getUserName());
+
+            response.add(res);
+        }
+
+        return response;
     }
 }

@@ -2,20 +2,20 @@ package com.christinap.notesappbe.service.impl;
 
 import com.christinap.notesappbe.entity.Note;
 import com.christinap.notesappbe.entity.Shared;
+import com.christinap.notesappbe.model.note.GetNoteResponse;
 import com.christinap.notesappbe.model.note.NoteDeleteRequest;
-import com.christinap.notesappbe.model.shared.AcceptRequest;
-import com.christinap.notesappbe.model.shared.AcceptResponse;
-import com.christinap.notesappbe.model.shared.SharedRequest;
-import com.christinap.notesappbe.model.shared.SharedResponse;
+import com.christinap.notesappbe.model.shared.*;
 import com.christinap.notesappbe.repository.NoteRepository;
 import com.christinap.notesappbe.repository.SharedRepository;
 import com.christinap.notesappbe.service.SharedService;
 import com.christinap.notesappbe.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -28,61 +28,103 @@ public class SharedServiceImpl implements SharedService {
     public SharedResponse addShared(SharedRequest request) {
         var sourceUser = userRepository.findByUserName(request.getSourceUsername()).orElseThrow();
         var sourceId = sourceUser.getId();
-        var targetUser = userRepository.findByUserName(request.getTargetUsername()).orElseThrow();
-        var targetId = targetUser.getId();
 
-        var shared = Shared.builder()
-                .noteId(request.getNoteId())
-                .sourceUser(sourceId)
-                .targetUser(targetId)
-                .build();
-        sharedRepository.save(shared);
+        try {
+            var targetUser = userRepository.findByUserName(request.getTargetUsername()).orElseThrow();
+            var targetId = targetUser.getId();
 
-        return SharedResponse.builder()
-                .id(shared.getId())
-                .noteId(shared.getNoteId())
-                .sourceId(shared.getSourceUser())
-                .targetId(shared.getTargetUser())
-                .build();
+            var shared = Shared.builder()
+                    .noteId(request.getNoteId())
+                    .sourceUser(sourceId)
+                    .targetUser(targetId)
+                    .build();
+
+            try{
+                sharedRepository.save(shared);
+            }
+            catch(DataIntegrityViolationException Exception){
+                String errorMessage = "You have already shared or requested to share with "
+                        + request.getTargetUsername() ;
+                return SharedResponse.builder()
+                        .id(null)
+                        .noteId(null)
+                        .sourceId(null)
+                        .targetId(null)
+                        .error(true)
+                        .errorMessage(errorMessage)
+                        .build();
+            }
+
+            return SharedResponse.builder()
+                    .id(shared.getId())
+                    .noteId(shared.getNoteId())
+                    .sourceId(shared.getSourceUser())
+                    .targetId(shared.getTargetUser())
+                    .error(false)
+                    .errorMessage(null)
+                    .build();
+        }
+        catch(NoSuchElementException exception){
+            String errorMessage = request.getTargetUsername() + " could not be found";
+            return SharedResponse.builder()
+                    .id(null)
+                    .noteId(null)
+                    .sourceId(null)
+                    .targetId(null)
+                    .error(true)
+                    .errorMessage(errorMessage)
+                    .build();
+        }
     }
 
     @Override
-    public List<Note> getSharedNotes(String query) {
+    public List<GetNoteResponse> getSharedNotes(String query) {
         List<Integer> noteIds = sharedRepository.getSharedByTargetId(query);
 
         List<Note> notes = new ArrayList<>();
+        List<GetNoteResponse> response = new ArrayList<>();
 
         for(Integer noteId : noteIds){
             var note = noteRepository.findOneNoteById(noteId).orElseThrow();
-            notes.add(note);
+            var user = userRepository.findById(note.getUser_id()).orElseThrow();
+            GetNoteResponse noteResponse = new GetNoteResponse();
+            noteResponse.setNote(note);
+            noteResponse.setAuthor(user.getUserName());
+            //notes.add(note);
+            response.add(noteResponse);
         }
 
-        return notes;
+//        return notes;
+        return response;
     }
 
     @Override
     public AcceptResponse updateAcceptShared(AcceptRequest request) {
-        var shared = sharedRepository.getSharedById(request.getId()).orElseThrow();
-        shared.setAccepted(request.getAccepted());
-        sharedRepository.save(shared);
+        sharedRepository.updateSharedAccept(request.getAccepted(), request.getId());
 
         return AcceptResponse.builder()
-                .id(shared.getId())
+                .id(request.getId())
                 .build();
     }
 
     @Override
-    public List<Note> getPendingSharedNotes(String query) {
-        List<Integer> noteIds = sharedRepository.getPendingSharedByTargetId(query);
+    public List<PendingSharedResponse> getPendingSharedNotes(String query) {
+        List<Shared> pendingShares = sharedRepository.getPendingSharedByTargetId(query);
 
-        List<Note> notes = new ArrayList<>();
+        List<PendingSharedResponse> response = new ArrayList<>();
 
-        for(Integer noteId : noteIds){
-            var note = noteRepository.findOneNoteById(noteId).orElseThrow();
-            notes.add(note);
+        for(Shared pendingShared : pendingShares){
+            PendingSharedResponse pendingSharedResponse = new PendingSharedResponse();
+            var note = noteRepository.findOneNoteById(pendingShared.getNoteId()).orElseThrow();
+            var user = userRepository.findById(note.getUser_id()).orElseThrow();
+            pendingSharedResponse.setShareId(pendingShared.getId());
+            pendingSharedResponse.setNote(note);
+            pendingSharedResponse.setNoteAuthor(user.getUserName());
+
+            response.add(pendingSharedResponse);
         }
 
-        return notes;
+        return response;
     }
 
     @Override
@@ -96,5 +138,23 @@ public class SharedServiceImpl implements SharedService {
             }
         }
         return deletedShared;
+    }
+
+    @Override
+    public List<SharedByNoteIdResponse> getSharedByNoteId(Integer request)
+    {
+        List<SharedByNoteIdResponse> response = new ArrayList<>();
+        List<Shared> sharedList = sharedRepository.getSharedByNoteIdQuery(request);
+
+        for (Shared shared : sharedList){
+            var targetUser = userRepository.findById(shared.getTargetUser()).orElseThrow();
+            SharedByNoteIdResponse res = new SharedByNoteIdResponse();
+            res.setShared(shared);
+            res.setTargetUsername(targetUser.getUserName());
+
+            response.add(res);
+        }
+
+        return response;
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 public interface NoteService {
     NoteResponse createNote(NoteRequest request);
 
-    List<Note> findNoteByUserId(String query);
+    List<GetNoteResponse> findNoteByUserId(String query);
 
     List<Note> findNoteById(String query);
 

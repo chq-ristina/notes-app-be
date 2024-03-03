@@ -30,6 +30,8 @@ public class Note {
     private LocalDateTime dateCreated;
     @UpdateTimestamp
     private LocalDateTime dateUpdated;
+    @Column(name = "modified_by")
+    private String modifiedBy;
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = Shared.class)
     @JoinColumn(name = "note_id")

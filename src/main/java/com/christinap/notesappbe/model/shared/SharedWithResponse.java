@@ -5,15 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SharedResponse {
-    private Integer id;
-    private Integer noteId;
-    private Integer sourceId;
-    private Integer targetId;
-    private boolean error;
-    private String errorMessage;
+public class SharedWithResponse {
+    private List<String> usernames;
+    private List<Boolean> accepted;
 }

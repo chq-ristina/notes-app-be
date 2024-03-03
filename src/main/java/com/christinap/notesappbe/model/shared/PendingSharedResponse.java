@@ -1,5 +1,5 @@
 package com.christinap.notesappbe.model.shared;
-
+import com.christinap.notesappbe.entity.Note;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,11 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SharedResponse {
-    private Integer id;
-    private Integer noteId;
-    private Integer sourceId;
-    private Integer targetId;
-    private boolean error;
-    private String errorMessage;
+public class PendingSharedResponse {
+    private Integer shareId;
+    private Note note;
+    private String noteAuthor;
 }

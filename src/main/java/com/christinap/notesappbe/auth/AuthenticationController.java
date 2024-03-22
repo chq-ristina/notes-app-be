@@ -1,6 +1,8 @@
 package com.christinap.notesappbe.auth;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +18,15 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ){
-        return ResponseEntity.ok(service.register(request));
+        try{
+            return ResponseEntity.ok(service.register(request));
+        }
+        catch(DataIntegrityViolationException ex){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(AuthenticationResponse.builder()
+                    .errorMessage("An account with this username or email address has already been created")
+                    .build());
+        }
+
     }
 
     @PostMapping("/authenticate")

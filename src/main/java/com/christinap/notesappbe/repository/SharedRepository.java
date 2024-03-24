@@ -35,7 +35,7 @@ public interface SharedRepository extends JpaRepository<Shared, Integer> {
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE SHARED" +
+    @Query(value = "UPDATE shared" +
             " SET ACCEPTED = :accepted" +
             " WHERE ID = :id", nativeQuery = true)
     void updateSharedAccept(Boolean accepted, Integer id);
